@@ -2,6 +2,21 @@
 
 This repository contains a complete DevOps infrastructure setup using Terraform, Ansible, Docker, and monitoring scripts. The project sets up AWS infrastructure, configures instances, deploys a containerized web application, and implements monitoring and backup solutions.
 
+## Architecture Diagram
+
+![AWS Architecture Diagram](Blank%20diagram.png)
+
+This architecture diagram shows the serverless media streaming application designed to handle 200 users per hour with high availability and security standards.
+
+Key components:
+- CloudFront for global content delivery
+- S3 for media storage
+- Lambda for video processing
+- API Gateway for RESTful endpoints
+- DynamoDB for metadata storage
+- Cognito for user authentication
+- CloudWatch for monitoring
+
 ## Prerequisites
 
 - AWS CLI configured with appropriate credentials
@@ -121,7 +136,6 @@ docker-compose ps
 ### 7. Accessing the Application
 
 - Web Application: http://localhost:80
-- Monitoring Dashboard: http://localhost:3000 (if configured)
 
 ## Infrastructure Details
 
@@ -209,19 +223,3 @@ terraform destroy -auto-approve
 cd ../terraform
 terraform destroy -auto-approve
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support, please open an issue in the GitHub repository.
