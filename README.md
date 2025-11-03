@@ -4,7 +4,7 @@ This repository contains a complete DevOps infrastructure setup using Terraform,
 
 ## Architecture Diagram
 
-![AWS Architecture Diagram](Blank%20diagram.png)
+![AWS Architecture Diagram](Lucidcraft.png)
 
 This architecture diagram shows the serverless media streaming application designed to handle 200 users per hour with high availability and security standards.
 
