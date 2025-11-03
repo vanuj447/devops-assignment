@@ -1,0 +1,49 @@
+---
+- name: Configure monitoring and backup scripts
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Create scripts directory
+      file:
+        path: /opt/scripts
+        state: directory
+        mode: '0755'
+
+    - name: Copy monitoring script
+      copy:
+        src: ../scripts/monitor.sh
+        dest: /opt/scripts/monitor.sh
+        mode: '0755'
+
+    - name: Copy MySQL backup script
+      copy:
+        src: ../scripts/mysql_backup.sh
+        dest: /opt/scripts/mysql_backup.sh
+        mode: '0755'
+
+    - name: Update MySQL root password
+      mysql_user:
+        name: root
+        host_all: yes
+        password: "mysecurepassword"
+        check_implicit_admin: yes
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Create MySQL backup directory
+      file:
+        path: /var/backups/mysql
+        state: directory
+        mode: '0755'
+
+    - name: Configure cron for monitoring
+      cron:
+        name: "System monitoring"
+        minute: "*/5"
+        job: "/opt/scripts/monitor.sh > /var/log/system_monitoring.log 2>&1"
+
+    - name: Configure cron for MySQL backup
+      cron:
+        name: "MySQL backup"
+        hour: "0"
+        minute: "0"
+        job: "/opt/scripts/mysql_backup.sh > /var/log/mysql_backup.log 2>&1"

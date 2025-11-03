@@ -1,0 +1,92 @@
+---
+- name: Install and configure dependencies
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Apache2
+      apt:
+        name: apache2
+        state: present
+
+    - name: Install Apache2 but don't start it
+      service:
+        name: apache2
+        state: stopped
+        enabled: no
+
+    - name: Install MySQL
+      apt:
+        name: 
+          - mysql-server
+          - mysql-client
+          - python3-mysqldb
+        state: present
+
+    - name: Start and enable MySQL
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Install required packages for Docker
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - gnupg
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Start and enable Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull nginx docker image
+      docker_image:
+        name: nginx:latest
+        source: pull
+
+    - name: Create Docker volume
+      docker_volume:
+        name: web_data
+        state: present
+
+    - name: Stop and remove existing container if exists
+      docker_container:
+        name: web_server
+        state: absent
+        force_kill: yes
+
+    - name: Run nginx container with volume
+      docker_container:
+        name: web_server
+        image: nginx:latest
+        state: started
+        ports:
+          - "80:80"
+        volumes:
+          - web_data:/usr/share/nginx/html
+        restart_policy: always
